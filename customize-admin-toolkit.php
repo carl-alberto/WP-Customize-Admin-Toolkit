@@ -2,10 +2,10 @@
 /*
  * Plugin Name: Customize Admin Toolkit
  * Version: 1.0
- * Plugin URI: http://www.hughlashbrooke.com/
- * Description: This is your starter template for your next WordPress plugin.
- * Author: Hugh Lashbrooke
- * Author URI: http://www.hughlashbrooke.com/
+ * Plugin URI: http://www.carlalberto.ml/
+ * Description: Simple tool to add a custom role, lower than and Administrator, assign and customize some capabilities.
+ * Author: Carl Alberto
+ * Author URI: http://www.carlalberto.ml/
  * Requires at least: 4.0
  * Tested up to: 4.0
  *
@@ -13,7 +13,7 @@
  * Domain Path: /lang/
  *
  * @package WordPress
- * @author Hugh Lashbrooke
+ * @author Carl Alberto
  * @since 1.0.0
  */
 
