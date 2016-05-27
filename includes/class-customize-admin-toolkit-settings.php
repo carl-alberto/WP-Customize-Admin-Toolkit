@@ -52,6 +52,15 @@ class Customize_Admin_Toolkit_Settings {
 
 		// Add settings link to plugins page
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->parent->file ) , array( $this, 'add_settings_link' ) );
+
+		//ADD hooks in this part
+
+		add_action( 'admin_menu' , 'enable_new_role' );
+
+		add_action( 'admin_menu' , array( $this, 'remove_jp_menu' ) );
+
+		add_action( 'admin_menu' , array( $this, 'remove_jp_icon' ) );
+
 	}
 
 	/**
@@ -67,7 +76,7 @@ class Customize_Admin_Toolkit_Settings {
 	 * @return void
 	 */
 	public function add_menu_item () {
-		$page = add_options_page( __( 'Plugin Settings', 'customize-admin-toolkit' ) , __( 'Plugin Settings', 'customize-admin-toolkit' ) , 'manage_options' , $this->parent->_token . '_settings' ,  array( $this, 'settings_page' ) );
+		$page = add_options_page( __( 'Custom Admin Toolkit Settings', 'customize-admin-toolkit' ) , __( 'CAT Settings', 'customize-admin-toolkit' ) , 'manage_options' , $this->parent->_token . '_settings' ,  array( $this, 'settings_page' ) );
 		add_action( 'admin_print_styles-' . $page, array( $this, 'settings_assets' ) );
 	}
 
@@ -107,9 +116,55 @@ class Customize_Admin_Toolkit_Settings {
 	 */
 	private function settings_fields () {
 
-		$settings['standard'] = array(
-			'title'					=> __( 'Standard', 'customize-admin-toolkit' ),
-			'description'			=> __( 'These are fairly standard form input fields.', 'customize-admin-toolkit' ),
+		$settings['adduser'] = array(
+			'title'					=> __( 'Add User Role', 'customize-admin-toolkit' ),
+			'description'			=> __( 'These are some extra input fields that maybe aren\'t as common as the others.', 'customize-admin-toolkit' ),
+			'fields'				=> array(
+				array(
+					'id' 			=> 'user_role_to_add',
+					'label'			=> __( 'Add New User Role Name' , 'customize-admin-toolkit' ),
+					'description'	=> __( 'This is a standard number field - if this field contains anything other than numbers then the form will not be submitted.', 'customize-admin-toolkit' ),
+					'type'			=> 'text',
+					'default'		=> 'asdfasdf',
+					'placeholder'	=> __( '42', 'customize-admin-toolkit' )
+				),
+				array(
+					'id' 			=> 'number_field',
+					'label'			=> __( 'A Number' , 'customize-admin-toolkit' ),
+					'description'	=> __( 'This is a standard number field - if this field contains anything other than numbers then the form will not be submitted.', 'customize-admin-toolkit' ),
+					'type'			=> 'number',
+					'default'		=> '',
+					'placeholder'	=> __( '42', 'customize-admin-toolkit' )
+				),
+				array(
+					'id' 			=> 'colour_picker',
+					'label'			=> __( 'Pick a colour', 'customize-admin-toolkit' ),
+					'description'	=> __( 'This uses WordPress\' built-in colour picker - the option is stored as the colour\'s hex code.', 'customize-admin-toolkit' ),
+					'type'			=> 'color',
+					'default'		=> '#21759B'
+				),
+				array(
+					'id' 			=> 'an_image',
+					'label'			=> __( 'An Image' , 'customize-admin-toolkit' ),
+					'description'	=> __( 'This will upload an image to your media library and store the attachment ID in the option field. Once you have uploaded an imge the thumbnail will display above these buttons.', 'customize-admin-toolkit' ),
+					'type'			=> 'image',
+					'default'		=> '',
+					'placeholder'	=> ''
+				),
+				array(
+					'id' 			=> 'multi_select_box',
+					'label'			=> __( 'A Multi-Select Box', 'customize-admin-toolkit' ),
+					'description'	=> __( 'A standard multi-select box - the saved data is stored as an array.', 'customize-admin-toolkit' ),
+					'type'			=> 'select_multi',
+					'options'		=> array( 'linux' => 'Linux', 'mac' => 'Mac', 'windows' => 'Windows' ),
+					'default'		=> array( 'linux' )
+				)
+			)
+		);
+
+		$settings['userroles'] = array(
+			'title'					=> __( 'User', 'customize-admin-toolkit' ),
+			'description'			=> __( 'Cust', 'customize-admin-toolkit' ),
 			'fields'				=> array(
 				array(
 					'id' 			=> 'text_field',
@@ -278,7 +333,7 @@ class Customize_Admin_Toolkit_Settings {
 
 		// Build page HTML
 		$html = '<div class="wrap" id="' . $this->parent->_token . '_settings">' . "\n";
-			$html .= '<h2>' . __( 'Plugin Settings' , 'customize-admin-toolkit' ) . '</h2>' . "\n";
+			$html .= '<h2>' . __( 'Custom Admin Settings' , 'customize-admin-toolkit' ) . '</h2>' . "\n";
 
 			$tab = '';
 			if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
@@ -372,5 +427,40 @@ class Customize_Admin_Toolkit_Settings {
 	public function __wakeup () {
 		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), $this->parent->_version );
 	} // End __wakeup()
+
+	public function enable_new_role () {
+		remove_menu_page( 'jetpack' );
+		echo 'asdfasdfasdfasdf';
+		//	echo 'enabled new role:' . get_option( 'wpt_user_role_to_add' ) ;
+
+		//$new_role_name = get_option( 'wpt_user_role_to_add' ) ;
+//		$admin_role_set = get_role( 'administrator' )->capabilities;
+
+//		var_dump($admin_role_set);
+
+		//$role = 'content_admin' ;
+		//$display_name = $new_role_name ;
+
+//		add_role( $role, $display_name, $new_role_set )
+
+	}
+
+
+	function remove_jp_menu() {
+		if( class_exists( 'Jetpack' ) && !current_user_can( 'manage_options' ) ) {
+
+			// This removes the page from the menu in the dashboard
+			remove_menu_page( 'jetpack' );
+		}
+	}
+
+	function remove_jp_icon() {
+		if( class_exists( 'Jetpack' ) && !current_user_can( 'manage_options' ) ) {
+
+			// This removes the small icon in the admin bar
+			echo "\n" . '<style type="text/css" media="screen">#wp-admin-bar-notes { display: none; }</style>' . "\n";
+		}
+	}
+
 
 }
